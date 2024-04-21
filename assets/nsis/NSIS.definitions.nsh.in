@@ -1,0 +1,4 @@
+!define VERSION "@APP_VERSION@"
+!define APP_VERSION "@APP_VERSION@"
+!define APP_NAME "@APP_NAME@"
+!define EXE_NAME "@EXE_NAME@"

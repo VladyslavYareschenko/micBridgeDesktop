@@ -1,0 +1,11 @@
+UI--MainWindow
+{
+    border-top: 1px solid #EEEEEE;
+    background: white;
+}
+
+QLabel
+{
+    color: #19252e;
+    font-size: 13px;
+}

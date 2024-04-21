@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons/general">
+        <file alias="loader">Icons/loader.gif</file>
+    </qresource>
+    <qresource prefix="/stylesheets">
+        <file>ApplicationStyle.css</file>
+    </qresource>
+</RCC>

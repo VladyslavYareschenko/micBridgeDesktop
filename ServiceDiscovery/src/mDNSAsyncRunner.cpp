@@ -6,6 +6,8 @@
 #include <boost/asio/post.hpp>
 #include <boost/asio/steady_timer.hpp>
 
+#include <dns_sd.h>
+
 #include <iostream>
 #include <thread>
 #include <queue>

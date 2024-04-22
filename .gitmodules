@@ -1,0 +1,3 @@
+[submodule "ServiceDiscovery/mDNSResponder"]
+	path = ServiceDiscovery/mDNSResponder
+	url = https://github.com/VladyslavYareschenko/mDNSResponder

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <dns_sd.h>
-
 #include <functional>
+
+typedef struct _DNSServiceRef_t* DNSServiceRef;
 
 class mDNSAsyncRunner
 {

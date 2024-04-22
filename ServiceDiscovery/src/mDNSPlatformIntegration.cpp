@@ -4,10 +4,10 @@
 #if defined(interface)
 #undef interface
 #endif
-#include <mDNSResponder/mDNSEmbeddedAPI.h>
+#include <mDNSEmbeddedAPI.h>
 #if _WIN32
-#include <mDNSResponder/Poll.h>
-#include <mDNSResponder/mDNSWin32.h>
+#include <Poll.h>
+#include <mDNSWin32.h>
 #elif __linux__
 #endif
 

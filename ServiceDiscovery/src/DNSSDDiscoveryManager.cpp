@@ -1,4 +1,4 @@
-#include "DNSSDDiscoveryManager.h"
+#include "ServiceDiscovery/DNSSDDiscoveryManager.h"
 
 #include "mDNSAsyncRunner.h"
 
@@ -6,6 +6,8 @@
 #include <boost/format.hpp>
 #include <boost/container_hash/hash.hpp>
 #include <boost/range/join.hpp>
+
+#include <dns_sd.h>
 
 #include <iostream>
 #include <set>

@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.14)
-set(CMAKE_CXX_STANDARD 20)
 
 project(micBridgeDesktop)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #set(CMAKE_CXX_FLAGS "-Wall")
 #set(CMAKE_CXX_FLAGS_RELEASE "/Ox")
@@ -40,7 +42,6 @@ find_package(Boost)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets Multimedia)
 
-
 set(LIVE555_BIN_DIR "${LIVE555_ROOT_DIR}/x64/${CMAKE_BUILD_TYPE}")
 find_library(LIVE555_LIVEMEDIA_LIB NAMES "liveMedia" REQUIRED HINTS "${LIVE555_BIN_DIR}")
 include_directories("${LIVE555_ROOT_DIR}/liveMedia/include")
@@ -51,16 +52,10 @@ include_directories("${LIVE555_ROOT_DIR}/UsageEnvironment/include")
 find_library(LIVE555_BUE_LIB NAMES "BasicUsageEnvironment" REQUIRED HINTS "${LIVE555_BIN_DIR}")
 include_directories("${LIVE555_ROOT_DIR}/BasicUsageEnvironment/include")
 
-if (NOT APPLE)
-    set(mDNS_ROOT_DIR ${MDNS_ROOT})
-    find_library(mDNS_LIB
-                 NAMES "mDNSResponder" REQUIRED
-                 HINTS "${mDNS_ROOT_DIR}/lib")
-    include_directories("${mDNS_ROOT_DIR}/include")
-endif()
-
-include_directories(${Boost_INCLUDE_DIRS})
 set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/Icons/application_icon.rc")
+
+add_subdirectory(ServiceDiscovery)
+
 # Uncomment following line to remove console while running
 add_executable(micBridgeDesktop WIN32 "main.cpp"
 #add_executable(micBridgeDesktop WIN32 "main.cpp"
@@ -82,14 +77,6 @@ add_executable(micBridgeDesktop WIN32 "main.cpp"
                                        "Broadcast/Internal/BC_BufferedMediaSink.h"
                                        "Broadcast/Internal/BC_BufferedMediaSink.cpp"
 
-                                       "ServiceDiscovery/DNSSDDefs.h"
-                                       "ServiceDiscovery/mDNSAsyncRunner.h"
-                                       "ServiceDiscovery/mDNSAsyncRunner.cpp"
-                                       "ServiceDiscovery/mDNSPlatformIntegration.h"
-                                       "ServiceDiscovery/mDNSPlatformIntegration.cpp"
-                                       "ServiceDiscovery/DNSSDDiscoveryManager.h"
-                                       "ServiceDiscovery/DNSSDDiscoveryManager.cpp"
-
                                        "UI_DriverControl.h"
                                        "UI_DriverControl.cpp"
                                        "UI_MainWindow.h"
@@ -106,17 +93,16 @@ add_executable(micBridgeDesktop WIN32 "main.cpp"
 
 set_target_properties(micBridgeDesktop PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
 
-target_link_libraries(micBridgeDesktop ${Boost_LIBRARIES}
+target_link_libraries(micBridgeDesktop  ServiceDiscovery
                                         ${LIVE555_LIVEMEDIA_LIB}
                                         ${LIVE555_GROUPSOCK_LIB}
                                         ${LIVE555_UE_LIB}
                                         ${LIVE555_BUE_LIB}
                                         Qt5::Widgets
-                                        Qt5::Multimedia
-                                        ${mDNS_LIB})
+                                        Qt5::Multimedia)
 
 if (WIN32)
-    target_link_libraries(micBridgeDesktop Cfgmgr32 Iphlpapi Netapi32 ${mDNS_LIB})
+    target_link_libraries(micBridgeDesktop Cfgmgr32)
 endif()
 
 get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
@@ -183,9 +169,10 @@ configure_file(${DRIVER_ROOT}/setup.exe
                COPYONLY)
 
 install(
-    DIRECTORY driver
+    DIRECTORY ${CMAKE_BINARY_DIR}/driver
     DESTINATION .
 )
+
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
 include(InstallRequiredSystemLibraries)
 set(CPACK_GENERATOR "NSIS")

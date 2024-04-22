@@ -177,6 +177,7 @@ configure_file(${DRIVER_ROOT}/MicBridge.inf
                ${CMAKE_BINARY_DIR}/driver/MicBridge.inf
                COPYONLY)
 
+# setup.exe = devcon.exe
 configure_file(${DRIVER_ROOT}/setup.exe
                ${CMAKE_BINARY_DIR}/driver/setup.exe
                COPYONLY)

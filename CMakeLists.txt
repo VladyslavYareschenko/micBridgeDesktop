@@ -5,51 +5,19 @@ project(micBridgeDesktop)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#set(CMAKE_CXX_FLAGS "-Wall")
-#set(CMAKE_CXX_FLAGS_RELEASE "/Ox")
-
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-#set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-
-#set (BUILD_SHARED_LIBS FALSE) # should force the libraries to be static
-
-#if (WIN32)
-#        if (BUILD_SHARED_LIBS)
-#            set (CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -MDd")
-#            set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -MDd")
-#            set (CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -MD")
-#            set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -MD")
-#        else()
-#            set (CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -MT")
-#            set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -MT")
-#            set (CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -MT")
-#            set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -MT")
-#        endif()
-#endif()
-
-set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
-set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
-set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
-set(Boost_USE_MULTITHREADED      ON)
-set(Boost_USE_STATIC_RUNTIME    OFF)
-if (NOT DEFINED BOOST_ROOT)
-        message(FATAL_ERROR "BOOST_ROOT dir is not specified. Can not continue project parsing.")
-endif()
-find_package(Boost)
-
+find_package(Boost REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets Multimedia)
-
-set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/Icons/application_icon.rc")
 
 add_subdirectory(ServiceDiscovery)
 add_subdirectory(Broadcast)
 
 # Uncomment following line to remove console while running
 add_executable(micBridgeDesktop WIN32 "main.cpp"
-#add_executable(micBridgeDesktop WIN32 "main.cpp"
+# add_executable(micBridgeDesktop        "main.cpp"
                                        "WMFUtils.h"
                                        "WMFUtils.cpp"
                                        "WMFAACDecoder.h"
@@ -67,7 +35,7 @@ add_executable(micBridgeDesktop WIN32 "main.cpp"
                                        "UI_AvailableServicesListModel.cpp"
 
                                        "UI_CommonResources.qrc"
-                                       ${APP_ICON_RESOURCE_WINDOWS})
+                                       "${CMAKE_CURRENT_SOURCE_DIR}/Icons/application_icon.rc")
 
 set_target_properties(micBridgeDesktop PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
 
@@ -99,6 +67,7 @@ add_custom_command(TARGET micBridgeDesktop POST_BUILD
                            --no-translations
                            --dir ${CMAKE_BINARY_DIR}/qtDeploy $<TARGET_FILE:micBridgeDesktop>
 )
+
 install(
     DIRECTORY ${CMAKE_BINARY_DIR}/qtDeploy/
     DESTINATION .
@@ -124,7 +93,9 @@ install(
         DESTINATION .
     )
 
-
+if (NOT DRIVER_ROOT)
+    message(FATAL_ERROR "Windows driver root not specified. Aborting build.")
+endif()
 
 configure_file(${DRIVER_ROOT}/micbridge.cat
                ${CMAKE_BINARY_DIR}/driver/micbridge.cat
@@ -148,8 +119,8 @@ install(
     DESTINATION .
 )
 
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
 include(InstallRequiredSystemLibraries)
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
 set(CPACK_GENERATOR "NSIS")
 set(CPACK_PACKAGE_NAME "MicBridge Desktop")
 set(CPACK_PACKAGE_VERSION "1.0")
@@ -183,18 +154,11 @@ list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS " nsExec::ExecToLog `\\\"$INSTDI
 list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS " nsExec::ExecToLog `\\\"$INSTDIR\\\\driver\\\\setup.exe\\\" install \\\"$INSTDIR\\\\driver\\\\MicBridge.inf\\\" Root\\\\MicBridge`")
 list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS " \\\${EnableX64FSRedirection}")
 list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS " SetRebootFlag true")
-#list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS " Sleep 5000")
-#list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS " MessageBox MB_YESNO|MB_ICONQUESTION \\\"Application requires restart. Reboot now?\\\" IDNO +2")
-#list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "     Reboot")
 string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_INSTALL_COMMANDS "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}")
 
 list ( APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS " nsExec::ExecToLog `\\\"$INSTDIR\\\\driver\\\\setup.exe\\\" remove \\\"$INSTDIR\\\\driver\\\\MicBridge.inf\\\" Root\\\\MicBridge`")
-#list ( APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS " Sleep 5000")
-#list ( APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS " MessageBox MB_YESNO|MB_ICONQUESTION \\\"Application requires restart. Reboot now?\\\" IDNO +2")
 list ( APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS " SetRebootFlag true")
 string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}")
-#list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS " ExecWait ./tmp/some-other-installer.exe")
-#list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS " RMDir /r ./tmp/")
 
 include(CPack)
    configure_file(

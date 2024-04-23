@@ -1,3 +1,6 @@
 [submodule "ServiceDiscovery/mDNSResponder"]
 	path = ServiceDiscovery/mDNSResponder
 	url = https://github.com/VladyslavYareschenko/mDNSResponder
+[submodule "Broadcast/live555"]
+	path = Broadcast/live555
+	url = https://github.com/VladyslavYareschenko/live555

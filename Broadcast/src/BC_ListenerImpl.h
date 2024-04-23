@@ -1,11 +1,12 @@
 #pragma once
 
-#include "../BC_AudioFramesHandler.h"
-#include "../BC_DispatchQueue.h"
-#include "../BC_ErrorHandler.h"
-#include "../BC_SuccessHandler.h"
+#include "Broadcast/BC_AudioFramesHandler.h"
+#include "Broadcast/BC_DispatchQueue.h"
+#include "Broadcast/BC_ErrorHandler.h"
+#include "Broadcast/BC_SuccessHandler.h"
 
-#include <liveMedia.hh>
+#include <RTSPClient.hh>
+#include <UsageEnvironment.hh>
 
 #include <iostream>
 #include <thread>

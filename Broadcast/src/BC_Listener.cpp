@@ -1,7 +1,7 @@
-#include "BC_Listener.h"
+#include "Broadcast/BC_Listener.h"
 
-#include "Internal/BC_ListenerImpl.h"
-#include "Internal/BC_Live555Runtime.h"
+#include "BC_ListenerImpl.h"
+#include "BC_Live555Runtime.h"
 
 namespace Broadcast
 {

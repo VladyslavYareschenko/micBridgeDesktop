@@ -42,19 +42,10 @@ find_package(Boost)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets Multimedia)
 
-set(LIVE555_BIN_DIR "${LIVE555_ROOT_DIR}/x64/${CMAKE_BUILD_TYPE}")
-find_library(LIVE555_LIVEMEDIA_LIB NAMES "liveMedia" REQUIRED HINTS "${LIVE555_BIN_DIR}")
-include_directories("${LIVE555_ROOT_DIR}/liveMedia/include")
-find_library(LIVE555_GROUPSOCK_LIB NAMES "groupsock" REQUIRED HINTS "${LIVE555_BIN_DIR}")
-include_directories("${LIVE555_ROOT_DIR}/groupsock/include")
-find_library(LIVE555_UE_LIB NAMES "UsageEnvironment" REQUIRED HINTS "${LIVE555_BIN_DIR}")
-include_directories("${LIVE555_ROOT_DIR}/UsageEnvironment/include")
-find_library(LIVE555_BUE_LIB NAMES "BasicUsageEnvironment" REQUIRED HINTS "${LIVE555_BIN_DIR}")
-include_directories("${LIVE555_ROOT_DIR}/BasicUsageEnvironment/include")
-
 set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/Icons/application_icon.rc")
 
 add_subdirectory(ServiceDiscovery)
+add_subdirectory(Broadcast)
 
 # Uncomment following line to remove console while running
 add_executable(micBridgeDesktop WIN32 "main.cpp"
@@ -63,19 +54,6 @@ add_executable(micBridgeDesktop WIN32 "main.cpp"
                                        "WMFUtils.cpp"
                                        "WMFAACDecoder.h"
                                        "WMFAACDecoder.cpp"
-
-                                       "Broadcast/BC_DispatchQueue.h"
-                                       "Broadcast/BC_ErrorHandler.h"
-                                       "Broadcast/BC_SuccessHandler.h"
-                                       "Broadcast/BC_AudioFramesHandler.h"
-                                       "Broadcast/BC_Listener.h"
-                                       "Broadcast/BC_Listener.cpp"
-                                       "Broadcast/Internal/BC_Live555Runtime.h"
-                                       "Broadcast/Internal/BC_Live555Runtime.cpp"
-                                       "Broadcast/Internal/BC_ListenerImpl.h"
-                                       "Broadcast/Internal/BC_ListenerImpl.cpp"
-                                       "Broadcast/Internal/BC_BufferedMediaSink.h"
-                                       "Broadcast/Internal/BC_BufferedMediaSink.cpp"
 
                                        "UI_DriverControl.h"
                                        "UI_DriverControl.cpp"
@@ -94,10 +72,7 @@ add_executable(micBridgeDesktop WIN32 "main.cpp"
 set_target_properties(micBridgeDesktop PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
 
 target_link_libraries(micBridgeDesktop  ServiceDiscovery
-                                        ${LIVE555_LIVEMEDIA_LIB}
-                                        ${LIVE555_GROUPSOCK_LIB}
-                                        ${LIVE555_UE_LIB}
-                                        ${LIVE555_BUE_LIB}
+                                        Broadcast
                                         Qt5::Widgets
                                         Qt5::Multimedia)
 

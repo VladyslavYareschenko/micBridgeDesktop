@@ -5,15 +5,21 @@ project(micBridgeDesktop)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
-
-find_package(Boost REQUIRED)
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets Multimedia)
-
+include(3rdParty/Config.cmake)
 add_subdirectory(ServiceDiscovery)
 add_subdirectory(Broadcast)
+
+set(GUI_SRC "UI_DriverControl.cpp"
+            "UI_MainWindow.cpp"
+            "UI_AudioLevelsIODevice.cpp"
+            "UI_AvailableServicesList.cpp"
+            "UI_AvailableServicesListModel.cpp"
+             "UI_DriverControl.h"
+             "UI_MainWindow.h"
+             "UI_AudioLevelsIODevice.h"
+             "UI_AvailableServicesList.h"
+             "UI_AvailableServicesListModel.h"
+             "UI_CommonResources.qrc")
 
 # Uncomment following line to remove console while running
 add_executable(micBridgeDesktop WIN32 "main.cpp"
@@ -23,36 +29,20 @@ add_executable(micBridgeDesktop WIN32 "main.cpp"
                                        "WMFAACDecoder.h"
                                        "WMFAACDecoder.cpp"
 
-                                       "UI_DriverControl.h"
-                                       "UI_DriverControl.cpp"
-                                       "UI_MainWindow.h"
-                                       "UI_MainWindow.cpp"
-                                       "UI_AudioLevelsIODevice.h"
-                                       "UI_AudioLevelsIODevice.cpp"
-                                       "UI_AvailableServicesList.h"
-                                       "UI_AvailableServicesList.cpp"
-                                       "UI_AvailableServicesListModel.h"
-                                       "UI_AvailableServicesListModel.cpp"
+                                       ${GUI_SRC}
 
-                                       "UI_CommonResources.qrc"
                                        "${CMAKE_CURRENT_SOURCE_DIR}/Icons/application_icon.rc")
 
-set_target_properties(micBridgeDesktop PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
-
+set_property(TARGET micBridgeDesktop PROPERTY AUTOMOC ON)
+set_property(TARGET micBridgeDesktop PROPERTY AUTORCC ON)
+set_target_properties(micBridgeDesktop
+                     PROPERTIES COMPILE_DEFINITIONS BUILDER_STATIC_DEFINE)
 target_link_libraries(micBridgeDesktop  ServiceDiscovery
                                         Broadcast
                                         Qt5::Widgets
                                         Qt5::Multimedia)
 
-if (WIN32)
-    target_link_libraries(micBridgeDesktop Cfgmgr32)
-endif()
-
-get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
-get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
-find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
-
-add_custom_command(TARGET micBridgeDesktop POST_BUILD
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/qtDeploy/
                    COMMAND ${WINDEPLOYQT_EXECUTABLE}
                            --release
@@ -65,37 +55,20 @@ add_custom_command(TARGET micBridgeDesktop POST_BUILD
                            --no-quick-import
                            --no-svg
                            --no-translations
-                           --dir ${CMAKE_BINARY_DIR}/qtDeploy $<TARGET_FILE:micBridgeDesktop>
+                           --dir ${CMAKE_BINARY_DIR}/qtDeploy $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
 )
 
-install(
-    DIRECTORY ${CMAKE_BINARY_DIR}/qtDeploy/
-    DESTINATION .
-    FILES_MATCHING PATTERN "*.*"
-)
-
-install(TARGETS micBridgeDesktop
-        DESTINATION .
-       )
-
-install(
-        DIRECTORY ${CMAKE_BINARY_DIR}/qtDeploy/styles
-        DIRECTORY ${CMAKE_BINARY_DIR}/qtDeploy/platforms
-        DIRECTORY ${CMAKE_BINARY_DIR}/qtDeploy/imageformats
-        DESTINATION .
-        FILES_MATCHING PATTERN "*.*"
-    )
-
-install(
-        FILES ${CMAKE_BINARY_DIR}/qtDeploy/Qt5Widgets.dll
-        ${CMAKE_BINARY_DIR}/qtDeploy/Qt5Gui.dll
-        ${CMAKE_BINARY_DIR}/qtDeploy/Qt5Core.dll
-        DESTINATION .
-    )
+if (WIN32)
+    target_link_libraries(micBridgeDesktop Cfgmgr32)
+endif()
 
 if (NOT DRIVER_ROOT)
     message(FATAL_ERROR "Windows driver root not specified. Aborting build.")
 endif()
+
+install(TARGETS ${CMAKE_PROJECT_NAME}
+        DESTINATION .
+       )
 
 configure_file(${DRIVER_ROOT}/micbridge.cat
                ${CMAKE_BINARY_DIR}/driver/micbridge.cat

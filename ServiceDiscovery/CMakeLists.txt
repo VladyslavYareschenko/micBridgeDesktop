@@ -17,7 +17,7 @@ add_subdirectory(mDNSResponder EXCLUDE_FROM_ALL)
 
 target_link_libraries(ServiceDiscovery 
 	PUBLIC ServiceDiscovery::interface
-        PRIVATE ${Boost_LIBRARIES} mDNSResponder)
+        PRIVATE Boost::asio Boost::assert Boost::format Boost::range mDNSResponder)
 
 target_include_directories(ServiceDiscovery
     PUBLIC

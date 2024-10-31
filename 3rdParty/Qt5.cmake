@@ -1,4 +1,4 @@
-message("-- Preparing Qt5...")
+message(STATUS "Preparing Qt5...")
 
 set(QT_ROOT ${THIRDPARTY_INSTALL_ROOT}/Qt5/)
 set(QT_ROOT_ARCH ${QT_ROOT}/msvc2017_64/)
@@ -6,12 +6,12 @@ set(QT_ARCHIVE ${THIRDPARTY_DOWNLOAD_ROOT}/Qt5_14_2_msvc2017_64.7z)
 set(QT_URL https://sourceforge.net/projects/micbridge-3rdparty/files/Qt5_14_2_msvc2017_64.7z)
 
 if (NOT EXISTS ${QT_ARCHIVE})
-    message("-- Downloading Qt5...")
+    message(STATUS "Downloading Qt5...")
     file(DOWNLOAD ${QT_URL} ${QT_ARCHIVE} SHOW_PROGRESS)
 endif()
 
 if (NOT EXISTS ${QT_ROOT_ARCH})
-    message("-- Extracting Qt5 to ${QT_ROOT}...")
+    message(STATUS "Extracting Qt5 to ${QT_ROOT}...")
     file(ARCHIVE_EXTRACT INPUT ${QT_ARCHIVE} DESTINATION ${QT_ROOT})
 endif()
 
@@ -46,4 +46,4 @@ install(
         DESTINATION .
     )
 
-message("-- Preparing Qt5 finished.")
+message(STATUS "Preparing Qt5 finished.")

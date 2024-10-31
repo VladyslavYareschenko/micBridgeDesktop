@@ -6,8 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(3rdParty/Config.cmake)
-add_subdirectory(ServiceDiscovery)
 add_subdirectory(Broadcast)
+add_subdirectory(ServiceDiscovery)
 
 set(GUI_SRC "UI_DriverControl.cpp"
             "UI_MainWindow.cpp"
@@ -56,41 +56,21 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
                            --no-svg
                            --no-translations
                            --dir ${CMAKE_BINARY_DIR}/qtDeploy $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
-)
+                           )
 
 if (WIN32)
     target_link_libraries(micBridgeDesktop Cfgmgr32)
 endif()
 
-if (NOT DRIVER_ROOT)
-    message(FATAL_ERROR "Windows driver root not specified. Aborting build.")
-endif()
-
 install(TARGETS ${CMAKE_PROJECT_NAME}
-        DESTINATION .
-       )
+        DESTINATION .)
 
-configure_file(${DRIVER_ROOT}/micbridge.cat
-               ${CMAKE_BINARY_DIR}/driver/micbridge.cat
-               COPYONLY)
-
-configure_file(${DRIVER_ROOT}/MicBridge.sys
-               ${CMAKE_BINARY_DIR}/driver/MicBridge.sys
-               COPYONLY)
-
-configure_file(${DRIVER_ROOT}/MicBridge.inf
-               ${CMAKE_BINARY_DIR}/driver/MicBridge.inf
-               COPYONLY)
-
-# setup.exe = devcon.exe
-configure_file(${DRIVER_ROOT}/setup.exe
-               ${CMAKE_BINARY_DIR}/driver/setup.exe
-               COPYONLY)
-
-install(
-    DIRECTORY ${CMAKE_BINARY_DIR}/driver
-    DESTINATION .
-)
+add_subdirectory(WinDriver)
+install(FILES "$<TARGET_FILE:micBridgeDriver>"
+              "$<TARGET_FILE_DIR:micBridgeDriver>/MicBridge.inf"
+              "$<TARGET_FILE_DIR:micBridgeDriver>/micbridge.cat"
+              "$<TARGET_FILE_DIR:micBridgeDriver>/setup.exe"
+        DESTINATION ./driver)
 
 include(InstallRequiredSystemLibraries)
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
@@ -134,7 +114,7 @@ list ( APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS " SetRebootFlag true")
 string (REPLACE ";" "\n" CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}")
 
 include(CPack)
-   configure_file(
-   ${PROJECT_SOURCE_DIR}/assets/nsis/NSIS.definitions.nsh.in
-   ${CMAKE_CURRENT_BINARY_DIR}/assets/nsis/NSIS.definitions.nsh
-   )
+
+configure_file(
+    ${PROJECT_SOURCE_DIR}/assets/nsis/NSIS.definitions.nsh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/assets/nsis/NSIS.definitions.nsh)

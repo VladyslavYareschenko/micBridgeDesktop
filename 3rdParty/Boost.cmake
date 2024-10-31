@@ -1,4 +1,4 @@
-message("-- Preparing Boost...")
+message(STATUS "Preparing Boost...")
 
 include(FetchContent)
 
@@ -18,4 +18,4 @@ fetchcontent_declare(
 
 fetchcontent_makeavailable(Boost)
 
-message("-- Preparing Boost finished.")
+message(STATUS "Preparing Boost finished.")

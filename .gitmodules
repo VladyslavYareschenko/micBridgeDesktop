@@ -4,3 +4,6 @@
 [submodule "Broadcast/live555"]
 	path = Broadcast/live555
 	url = https://github.com/VladyslavYareschenko/live555
+[submodule "WinDriver"]
+	path = WinDriver
+	url = https://github.com/VladyslavYareschenko/micBridgeWinDriver
